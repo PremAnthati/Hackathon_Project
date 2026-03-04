@@ -1,15 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import MultiLabelBinarizer
-import joblib
-import os
-
-# Define path for dataset and output model
-import pandas as pd
-import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 
@@ -43,8 +34,8 @@ def train_model():
     print(f"Number of training samples: {len(X_train)}")
     print(f"Number of test samples: {len(X_test)}")
 
-    print("Training RandomForestClassifier...")
-    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    print("Training LogisticRegression...")
+    clf = LogisticRegression(max_iter=1000, random_state=42)
     clf.fit(X_train, y_train)
 
     # Evaluate the model

@@ -2,9 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import AnalyzeRequest, AnalyzeResponse
 from services.nlp_engine import extract_symptoms
-from services.risk_scorer import compute_risk
 from services.translator import translate_text
-from services.ml_predictor import predict_disease
+import json
+
+# Import the new hybrid model
+from services.hybrid_triage_model import hybrid_clinical_triage_engine
 
 # Initialize FastAPI app
 app = FastAPI(title="AI Healthcare Triage API", version="1.0.0")
@@ -32,38 +34,38 @@ async def analyze_symptoms(req: AnalyzeRequest):
     # 2. Extract Symptoms from English Text
     detected_symptoms = extract_symptoms(english_text)
     
-    # 3. Compute Risk & Classification
-    result = compute_risk(detected_symptoms, age=req.user_age)
+    patient_data = {
+        "symptoms": detected_symptoms,
+        "age": req.user_age or 0,
+        "existing_conditions": []
+    }
     
-    # 4. Predict likely disease if we have symptoms
-    predicted_condition = None
-    if result["detected_symptoms"]:
-        raw_prediction = predict_disease(result["detected_symptoms"])
-        if raw_prediction:
-            predicted_condition = raw_prediction
+    # 4. Compute Risk & Classification via Hybrid Engine
+    hybrid_result_str = hybrid_clinical_triage_engine(patient_data)
+    result = json.loads(hybrid_result_str)
 
-    # 5. Generate Explanations and Recommendation
-    explanations = [f"{sym} increases risk." for sym in result["detected_symptoms"]]
+    possible_conditions = result.get("possible_conditions", [])
+    explanations = result.get("explanations", [])
+    
     if not explanations:
         explanations = ["No severe symptoms detected."]
         
-    if predicted_condition:
-        explanations.append(f"AI Model indicates possible traits of: {predicted_condition}")
+    if possible_conditions:
+        explanations.append(f"AI Model indicates possible traits of: {', '.join(possible_conditions)}")
 
-    # 6. Translate Final Response back if needed
-    recommendation = result["recommendation"]
+    # 5. Translate Final Response back if needed
+    recommendation = result.get("recommendation", "")
     if lang != "en":
         # Translate explanation & recommendation
         explanations = [translate_text(e, src="en", dest=lang) for e in explanations]
         recommendation = translate_text(recommendation, src="en", dest=lang)
-        if predicted_condition:
-            predicted_condition = translate_text(predicted_condition, src="en", dest=lang)
+        possible_conditions = [translate_text(c, src="en", dest=lang) for c in possible_conditions]
             
     return AnalyzeResponse(
-        risk_score=result["risk_score"],
-        risk_level=result["risk_level"],
-        detected_symptoms=result["detected_symptoms"],
-        predicted_condition=predicted_condition,
+        risk_score=result.get("risk_score", 0),
+        risk_level=result.get("risk_level", "LOW"),
+        detected_symptoms=result.get("detected_symptoms", []),
+        possible_conditions=possible_conditions,
         explanation=explanations,
         recommendation=recommendation
     )

@@ -25,14 +25,19 @@ export function RecommendationCard({ result }: Props) {
                 </div>
             </div>
 
-            {result.predicted_condition && (
+            {result.possible_conditions && result.possible_conditions.length > 0 && (
                 <div className="recommendation-section">
                     <h3 className="section-title text-accent">
-                        <Activity size={20} className="icon-mr" /> ML Prediction
+                        <Activity size={20} className="icon-mr" /> ML Predictions (Likely Conditions)
                     </h3>
                     <div className="prediction-box">
-                        <strong>Likely Condition: </strong>
-                        <span className="prediction-text">{result.predicted_condition}</span>
+                        <div className="tags-container mt-2">
+                            {result.possible_conditions.map((condition, idx) => (
+                                <span key={idx} className="symptom-tag text-accent" style={{ background: 'rgba(56, 189, 248, 0.15)', borderColor: 'rgba(56, 189, 248, 0.3)' }}>
+                                    {condition}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

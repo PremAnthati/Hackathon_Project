@@ -4,7 +4,7 @@ export interface AnalyzeResponse {
     risk_score: number;
     risk_level: string;
     detected_symptoms: string[];
-    predicted_condition?: string;
+    possible_conditions?: string[];
     explanation: string[];
     recommendation: string;
 }

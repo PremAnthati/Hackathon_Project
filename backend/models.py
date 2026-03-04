@@ -14,6 +14,6 @@ class AnalyzeResponse(BaseModel):
     risk_score: int
     risk_level: str
     detected_symptoms: List[str]
-    predicted_condition: Optional[str] = None
+    possible_conditions: Optional[List[str]] = None
     explanation: List[str]
     recommendation: str
