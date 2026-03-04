@@ -2,11 +2,11 @@ from typing import List, Dict, Any
 
 # Predefined weights as per requirements
 SYMPTOM_WEIGHTS = {
-    "fever": 20,
+    "high_fever": 20,
     "chest_pain": 35,
-    "difficulty_breathing": 40,
+    "breathlessness": 40,
     "vomiting": 10,
-    "severe_headache": 15,
+    "headache": 15,
     "dizziness": 10
 }
 
