@@ -280,11 +280,11 @@ def hybrid_clinical_triage_engine(patient_data: Dict[str, Any]) -> str:
 if __name__ == "__main__":
     patient_json = '''{
         "symptoms":[
-            {"name":"fever","severity":"severe","days":3},
-            {"name":"breathing_difficulty","severity":"moderate","days":1},
-            {"name":"stomach_pain","severity":"mild","days":2}
+            {"name": "fever", "severity": "moderate", "days": 3},
+            {"name": "cough", "severity": "moderate", "days": 2},
+            {"name": "breathing_difficulty", "severity": "severe", "days": 1}
         ],
-        "age":62,
+        "age": 45,
         "existing_conditions":["diabetes"]
     }'''
     

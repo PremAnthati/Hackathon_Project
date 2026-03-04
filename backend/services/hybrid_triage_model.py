@@ -121,7 +121,13 @@ HIGH_RISK_CONDITIONS = {
 }
 
 def calculate_duration_score(symptom_name: str, days: int) -> Tuple[float, str]:
-    if days >= 7:
+    if days >= 100:
+        return 80.0, f"{symptom_name.replace('_', ' ')} lasting {days} days is chronic and extremely severe, requiring immediate medical attention"
+    elif days >= 30:
+        return 40.0, f"{symptom_name.replace('_', ' ')} lasting {days} days indicates a highly concerning prolonged condition"
+    elif days >= 14:
+        return 25.0, f"{symptom_name.replace('_', ' ')} lasting {days} days suggests a potentially severe underlying condition"
+    elif days >= 7:
         return 15.0, f"{symptom_name.replace('_', ' ')} lasting {days} days suggests prolonged illness or serious infection"
     elif days >= 3:
         return 10.0, f"{symptom_name.replace('_', ' ')} lasting several days indicates infection"
